@@ -8,7 +8,7 @@ using SimpleJSON;
 public class ChickenGameController : MonoBehaviour {
 
 	// Constants
-	private const string HYDNA_CHANNEL = "hy-chickenrace.hydna.net";
+	private const string HYDNA_DOMAIN = "hy-chickenrace.hydna.net";
 	private const string USER_ONLINE = "user-online";
 	private const string USER_OFFLINE = "user-offline";
 	private const int MAX_TICK = 5;
@@ -40,7 +40,7 @@ public class ChickenGameController : MonoBehaviour {
 	private bool hasSentEnter = false;
 
 	private GUIStyle TextInputStyle;
-	
+
 	// Public
 	public GameObject Player;
 	public GameObject ChickenClone;
@@ -56,7 +56,7 @@ public class ChickenGameController : MonoBehaviour {
 	}
 
 	void Start() {
-	
+
 		players = new Dictionary<string, ChickenPlayer>();
 
 		if (Player) {
@@ -74,8 +74,8 @@ public class ChickenGameController : MonoBehaviour {
 	void ConnectLobby() {
 
 		lobby_conn = new Channel();
-		
-		lobby_conn.Connect (HYDNA_CHANNEL + "?" + player_name, ChannelMode.ReadWrite);
+
+		lobby_conn.Connect (HYDNA_DOMAIN + "?" + player_name, ChannelMode.ReadWrite);
 		lobby_conn.Open += delegate(object sender, ChannelEventArgs e) {
 
 			var info = JSON.Parse(e.Text);
@@ -97,11 +97,11 @@ public class ChickenGameController : MonoBehaviour {
 
 			chat_buffer += "* Connected to lobby";
 		};
-		
+
 		lobby_conn.Data += delegate(object sender, ChannelDataEventArgs e) {
 
 			var info = JSON.Parse(e.Text);
-			
+
 			string from = info["from"].Value;
 			string timestamp = info["timestamp"].Value;
 			string body = info["body"].Value;
@@ -109,9 +109,9 @@ public class ChickenGameController : MonoBehaviour {
 			chat_buffer += "\n" + "* " + from + ": " + body;
 
 			scrollPosition.y = Mathf.Infinity;
-			
+
 		};
-		
+
 		lobby_conn.Signal += delegate(object sender, ChannelEventArgs e) {
 
 			if (lobby_conn.State != ChannelState.Open) {
@@ -125,12 +125,12 @@ public class ChickenGameController : MonoBehaviour {
 
 			switch (info["op"]) {
 				case USER_ONLINE:
-					
+
 					playerId = info["id"].Value;
 					name = info["name"].Value;
 
 					chat_buffer += "\n* " + name + " joined the demo";
-				
+
 					AddChicken(playerId, name);
 
 				break;
@@ -147,7 +147,7 @@ public class ChickenGameController : MonoBehaviour {
 				break;
 			}
 		};
-		
+
 		lobby_conn.Closed += delegate(object sender, ChannelCloseEventArgs e) {
 			chat_buffer += "\n* Disconnected from demo";
 		};
@@ -169,7 +169,7 @@ public class ChickenGameController : MonoBehaviour {
 
 		return false;
 	}
-	
+
 	void SendState() {
 
 		if (player_conn.State == ChannelState.Open) {
@@ -183,7 +183,7 @@ public class ChickenGameController : MonoBehaviour {
 
 				MemoryStream stream = new MemoryStream ();
 				BinaryWriter writer = new BinaryWriter (stream);
-				
+
 				writer.Write (ActionPayload.OP_MOVEMENT);
 				writer.Write (Time.fixedTime);
 				writer.Write (player_last_position.x);
@@ -207,7 +207,7 @@ public class ChickenGameController : MonoBehaviour {
 
 				ChickenPlayer chicklet = new ChickenPlayer(playerId, name);
 
-				chicklet.Connect(HYDNA_CHANNEL + "/user/" + playerId);
+				chicklet.Connect(HYDNA_DOMAIN + "/user/" + playerId);
 
 				players.Add(playerId, chicklet);
 
@@ -239,8 +239,8 @@ public class ChickenGameController : MonoBehaviour {
 	void ConnectMe(string id) {
 
 		player_conn = new Channel();
-		
-		player_conn.Connect (HYDNA_CHANNEL + "/user/" + id, ChannelMode.Write);
+
+		player_conn.Connect (HYDNA_DOMAIN + "/user/" + id, ChannelMode.Write);
 		player_conn.Open += delegate(object sender, ChannelEventArgs e) {
 			Debug.Log("player channel connected");
 		};
@@ -248,7 +248,7 @@ public class ChickenGameController : MonoBehaviour {
 		player_conn.Signal += delegate(object sender, ChannelEventArgs e) {
 
 			var info = JSON.Parse(e.Text);
-			
+
 			string op = info["op"].Value;
 			string type = info["type"].Value;
 
@@ -266,7 +266,7 @@ public class ChickenGameController : MonoBehaviour {
 			}
 
 		};
-		
+
 		player_conn.Closed += delegate(object sender, ChannelCloseEventArgs e) {
 			Debug.Log("player channel closed: " + e.Reason);
 		};
@@ -278,7 +278,7 @@ public class ChickenGameController : MonoBehaviour {
 		TextInputStyle = GUI.skin.textField;
 		TextInputStyle.fontSize = 14;
 		TextInputStyle.alignment = TextAnchor.MiddleLeft;
-		
+
 		if (name_entered) {
 
 			// Draw character labels
@@ -308,49 +308,49 @@ public class ChickenGameController : MonoBehaviour {
 			if (show_chat) {
 
 				GUI.Box (new Rect (20.0f, 20.0f, Screen.width - 40.0f, Screen.height - 100.0f), "Let's have a chat");
-				
+
 				GUILayout.BeginArea(new Rect(40.0f, 40.0f + 20.0f, Screen.width - 80.0f, Screen.height - 160.0f));
 				scrollPosition = GUILayout.BeginScrollView(scrollPosition);
 
 				GUILayout.Label (chat_buffer);
-				
+
 				GUILayout.EndScrollView();
 				GUILayout.EndArea();
-				
-				Event e = Event.current;        
-				if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Return) {       
+
+				Event e = Event.current;
+				if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Return) {
 					if (!hasSentEnter) {
 						SendChat();
 						hasSentEnter = true;
 					}
 				}
-				
-				if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Return) {  
+
+				if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Return) {
 					hasSentEnter = false;
 				}
-				
+
 				chat_input_txt = GUI.TextField (new Rect (20.0f, Screen.height - 60.0f, Screen.width - 140.0f, 40.0f), chat_input_txt, 200);
-				
+
 				if (GUI.Button (new Rect (Screen.width - 100.0f, Screen.height - 60.0f, 80.0f, 40.0f), "Send")) {
-					
+
 					SendChat();
 				}
-				
+
 				if (GUI.Button (new Rect (Screen.width - 60.0f, 10.0f, 50.0f, 50.0f), "x")) {
-					
+
 					ToggleChat();
 				}
-				
+
 			} else {
 
 				if(GUI.Button (new Rect (20.0f, 20.0f, 60.0f, 40.0f), "Chat")) {
-					
+
 					ToggleChat();
 				}
 			}
-			
+
 		} else {
-			
+
 			// Draw name input
 			float startx = (Screen.width * 0.5f) - 155.0f;
 			float starty = (Screen.height * 0.5f) - 40.0f;
@@ -359,25 +359,25 @@ public class ChickenGameController : MonoBehaviour {
 			GUI.Label(rect, "Pick a name:");
 
 
-			Event e = Event.current;        
-			if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Return) {       
+			Event e = Event.current;
+			if (e.type == EventType.KeyDown && e.keyCode == KeyCode.Return) {
 				if (!hasSentEnter) {
 					PickName();
 					hasSentEnter = true;
 				}
 			}
-			
-			if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Return) {  
+
+			if (e.type == EventType.KeyUp && e.keyCode == KeyCode.Return) {
 				hasSentEnter = false;
 			}
-			
+
 			name_input_txt = GUI.TextField (new Rect (startx, starty, 200.0f, 40.0f), name_input_txt, 200, TextInputStyle);
-			
+
 			if (GUI.Button (new Rect (startx + 210.0f, starty, 100.0f, 40.0f), "Go")) {
-				
+
 				PickName();
 			}
-			
+
 		}
 	}
 
@@ -400,11 +400,11 @@ public class ChickenGameController : MonoBehaviour {
 
 			lobby_conn.Send(payload);
 		}
-		
+
 		chat_input_txt = "";
-		
+
 	}
-	
+
 	void ToggleChat() {
 
 		if (show_chat) {
@@ -416,10 +416,10 @@ public class ChickenGameController : MonoBehaviour {
 	}
 
 	void Update() {
-		
+
 		if (player_conn != null && player_conn.State == ChannelState.Open) {
 			if (tick >= MAX_TICK) {
-				
+
 				SendState();
 
 				tick = 0;
@@ -451,7 +451,7 @@ public class ChickenGameController : MonoBehaviour {
 				chicken.Update();
 
 				if (chicken.ShouldSwitch) {
-			
+
 					Destroy(chicken.getGameObject());
 					GameObject clone = Instantiate(cloning) as GameObject;
 					chicken.SwitchSkin (clone);
@@ -468,7 +468,7 @@ public class ChickenGameController : MonoBehaviour {
 					if (removeKey == null) {
 						chicken.Die();
 						Destroy(chicken.getGameObject(), 2.0f);
-						
+
 						removeKey = key;
 					}
 				}
