@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chicken GOD</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="app.css" type="text/css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="https://www.hydna.com/" title="Give us a visit">Chicken GOD</a></h1>
+      <span id="status"></span>
+    </header>
+    <div id="map">
+      <canvas></canvas>
+      <div class="controls">
+        <button class="revoke" data-type="chicken">Revoke</button>
+        <button class="grant-fox" data-type="fox">Grant Fox</button>
+        <button class="grant-megachicken" data-type="megachicken">Grant MEGAChicken</button>
+      </div>
+    </div>
+    <div id="chatbox">
+      <ul class="messages"></ul>
+      <div class="textarea-placeholder">
+        <textarea placeholder="Send a message from GOD"></textarea>
+      </div>
+    </div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/hydna/1.0.0/hydna.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
