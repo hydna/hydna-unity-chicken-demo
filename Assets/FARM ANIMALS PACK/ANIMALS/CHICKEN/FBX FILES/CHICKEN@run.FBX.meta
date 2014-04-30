@@ -1,0 +1,117 @@
+fileFormatVersion: 2
+guid: de32936bf6621dc40a58fbc46d046de3
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: CHICKEN_ R UpperArm
+    100002: CHICKEN_ L Foot
+    100004: CHICKEN_ R Calf
+    100006: CHICKEN_ R Clavicle
+    100008: CHICKEN_ R Thigh
+    100010: //RootNode
+    100012: CHICKEN_ L Calf
+    100014: CHICKEN_ R Toe0
+    100016: CHICKEN_ L UpperArm
+    100018: CHICKEN_ L Toe0
+    100020: CHICKEN_ L Toe1
+    100022: CHICKEN_ R Hand
+    100024: CHICKEN_ R HorseLink
+    100026: CHICKEN_ L Clavicle
+    100028: CHICKEN_ L Forearm
+    100030: CHICKEN_ Neck2
+    100032: CHICKEN_ Neck1
+    100034: CHICKEN_ Neck
+    100036: CHICKEN_ R Toe1
+    100038: CHICKEN_ L Hand
+    100040: CHICKEN_ Spine
+    100042: CHICKEN_ R Foot
+    100044: CHICKEN_ Queue de cheval 1
+    100046: CHICKEN_ Pelvis
+    100048: CHICKEN_ Head
+    100050: CHICKEN_ R Forearm
+    100052: CHICKEN_ L HorseLink
+    100054: CHICKEN_
+    100056: CHICKEN_ L Thigh
+    400000: CHICKEN_ R UpperArm
+    400002: CHICKEN_ L Foot
+    400004: CHICKEN_ R Calf
+    400006: CHICKEN_ R Clavicle
+    400008: CHICKEN_ R Thigh
+    400010: //RootNode
+    400012: CHICKEN_ L Calf
+    400014: CHICKEN_ R Toe0
+    400016: CHICKEN_ L UpperArm
+    400018: CHICKEN_ L Toe0
+    400020: CHICKEN_ L Toe1
+    400022: CHICKEN_ R Hand
+    400024: CHICKEN_ R HorseLink
+    400026: CHICKEN_ L Clavicle
+    400028: CHICKEN_ L Forearm
+    400030: CHICKEN_ Neck2
+    400032: CHICKEN_ Neck1
+    400034: CHICKEN_ Neck
+    400036: CHICKEN_ R Toe1
+    400038: CHICKEN_ L Hand
+    400040: CHICKEN_ Spine
+    400042: CHICKEN_ R Foot
+    400044: CHICKEN_ Queue de cheval 1
+    400046: CHICKEN_ Pelvis
+    400048: CHICKEN_ Head
+    400050: CHICKEN_ R Forearm
+    400052: CHICKEN_ L HorseLink
+    400054: CHICKEN_
+    400056: CHICKEN_ L Thigh
+    7400000: Take 001
+    11100000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 0
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 2
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .00999999978
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  userData: 
