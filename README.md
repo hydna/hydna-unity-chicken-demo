@@ -18,7 +18,7 @@ Open the **Assets/ChickenHydnaDemo.unity** file and build the project for MacOSX
 
 Open the **chicken-god-web/index.html** file to see and control player states in the demo.
 
-Then run you compiled app on you selected platform and have a friend or more do the same.
+Then run your compiled app on your selected platform and have a friend or more do the same.
 
 ## License etc
 
