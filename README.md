@@ -24,5 +24,5 @@ Then run you compiled app on you selected platform and have a friend or more do 
 
 No animals were harmed in the making of this demo, but the animal assets can only be used to try out the demo project. If you want to use the animals in your own project they can be found in the unity asset store:
 
-[chicken](https://www.assetstore.unity3d.com/#/content/5029)
+[chicken](https://www.assetstore.unity3d.com/#/content/5029) or the 
 [fox](https://www.assetstore.unity3d.com/#/content/14260)
