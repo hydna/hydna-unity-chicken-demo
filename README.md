@@ -12,7 +12,7 @@ You can create a free hydna domain at [www.hydna.com](https://www.hydna.com/)
 
 ## Installation
 
-Open the **Assets/ChickenHydnaDemo.unity** file and build the project for Macosx, Windows or linux.
+Open the **Assets/ChickenHydnaDemo.unity** file and build the project for MacOSX, Windows or linux.
 
 ## Usage
 
