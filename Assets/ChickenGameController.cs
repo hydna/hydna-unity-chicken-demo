@@ -268,11 +268,7 @@ public class ChickenGameController : MonoBehaviour {
 		};
 
 		player_conn.Closed += delegate(object sender, ChannelCloseEventArgs e) {
-			if (e.WasClean) {
-				Debug.Log("player left");
-			} else {
-				Debug.Log("player channel closed: " + e.Reason);
-			}
+			Debug.Log("player channel closed: " + e.Reason);
 		};
 
 	}

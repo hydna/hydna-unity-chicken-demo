@@ -98,7 +98,11 @@ class ChickenPlayer {
 		};
 		
 		conn.Closed += delegate(object sender, ChannelCloseEventArgs e) {
-			Debug.Log(" closed channel: " + Id + ", reason: " + e.Reason);
+			if (e.WasClean) {
+				Debug.Log("closed channel: " + Id);
+			} else {
+				Debug.Log("closed channel: " + Id + ", reason: " + e.Reason);
+			}
 		};	
 	}
 	
@@ -116,7 +120,6 @@ class ChickenPlayer {
 					target_rotation = action.rot;
 					
 					if (action.state != animationState) {
-						
 						ChangeState (action.state);
 					}
 
@@ -146,12 +149,12 @@ class ChickenPlayer {
 	
 	public void Execute() {
 		ShouldRemove = true;
-		conn.Close ();
+		conn.Close();
 	}
 	
 	public void Die() {
 		animationState = 4;
-		animations [stateAnimation [animationState]].wrapMode = WrapMode.Once;
+		animations[stateAnimation [animationState]].wrapMode = WrapMode.Once;
 		animations.CrossFade(stateAnimation[animationState]);
 	}
 	
