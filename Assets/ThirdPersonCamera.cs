@@ -11,6 +11,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 	
 	// The distance in the x-z plane to the target	
 	public float distance = 7.0f;
+	public float distanceSmoothLag = 0.3f;
 	
 	// the height we want the camera to be above the target
 	public float height = 3.0f;
@@ -32,9 +33,11 @@ public class ThirdPersonCamera : MonoBehaviour {
 	
 	private float heightVelocity = 0.0f;
 	private float angleVelocity = 0.0f;
+	private float distanceVelocity = 0.0f;
 	private bool snap = false;
 	private ThirdPersonController controller;
-	private float targetHeight = 100000.0f; 
+	private float targetHeight = 100000.0f;
+	private float targetDistance = 7.0f;
 	
 	void Awake() {
 		
@@ -48,6 +51,8 @@ public class ThirdPersonCamera : MonoBehaviour {
 		}
 			
 		_target = transform;
+		targetDistance = distance;
+
 		if (_target) {
 			controller = _target.GetComponent<ThirdPersonController>();
 		}
@@ -81,15 +86,15 @@ public class ThirdPersonCamera : MonoBehaviour {
 			return;
 		}
 		
-		Vector3 targetCenter= _target.position + centerOffset;
-		Vector3 targetHead= _target.position + headOffset;
+		Vector3 targetCenter = _target.position + centerOffset;
+		Vector3 targetHead = _target.position + headOffset;
 	
 		// Calculate the current & target rotation angles
-		float originalTargetAngle= _target.eulerAngles.y;
-		float currentAngle= cameraTransform.eulerAngles.y;
+		float originalTargetAngle = _target.eulerAngles.y;
+		float currentAngle = cameraTransform.eulerAngles.y;
 	
 		// Adjust real target angle when camera is locked
-		float targetAngle= originalTargetAngle; 
+		float targetAngle = originalTargetAngle; 
 		
 		// When pressing Fire2 (alt) the camera will snap to the target direction real quick.
 		// It will stop snapping when it reaches the target
@@ -99,7 +104,7 @@ public class ThirdPersonCamera : MonoBehaviour {
 
 		if (snap) {
 			// We are close to the target, so we can stop snapping now!
-			if (AngleDistance (currentAngle, originalTargetAngle) < 3.0f) {
+			if (AngleDistance(currentAngle, originalTargetAngle) < 3.0f) {
 				snap = false;
 			}
 			
@@ -135,6 +140,9 @@ public class ThirdPersonCamera : MonoBehaviour {
 		// Damp the height
 		float currentHeight = cameraTransform.position.y;
 		currentHeight = Mathf.SmoothDamp(currentHeight, targetHeight, ref heightVelocity, heightSmoothLag);
+
+		// Damp the distance
+		distance = Mathf.SmoothDamp(distance, targetDistance, ref distanceVelocity, distanceSmoothLag);
 	
 		// Convert the angle into a rotation, by which we then reposition the camera
 		Quaternion currentRotation = Quaternion.Euler(0, currentAngle, 0);
@@ -217,7 +225,11 @@ public class ThirdPersonCamera : MonoBehaviour {
 			cameraTransform.rotation *= Quaternion.Euler(-extraLookAngle, 0, 0);
 		}
 	}
-	
+
+	public void UpdateDistance(float dist) {
+		targetDistance = dist;
+	}
+
 	public Vector3 GetCenterOffset() {
 		return centerOffset;
 	}

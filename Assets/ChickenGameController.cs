@@ -217,7 +217,7 @@ public class ChickenGameController : MonoBehaviour {
 		}
 
 		if (players.Count > 0) {
-			camera_controller.distance = 4.0f;
+			camera_controller.UpdateDistance(4.0f);
 		}
 
 	}
@@ -230,8 +230,8 @@ public class ChickenGameController : MonoBehaviour {
 			}
 		}
 
-		if (players.Count < 2) {
-			camera_controller.distance = 2.0f;
+		if ((players.Count - 1) == 0) {
+			camera_controller.UpdateDistance(2.0f);
 		}
 	}
 
@@ -268,7 +268,11 @@ public class ChickenGameController : MonoBehaviour {
 		};
 
 		player_conn.Closed += delegate(object sender, ChannelCloseEventArgs e) {
-			Debug.Log("player channel closed: " + e.Reason);
+			if (e.WasClean) {
+				Debug.Log("player left");
+			} else {
+				Debug.Log("player channel closed: " + e.Reason);
+			}
 		};
 
 	}
