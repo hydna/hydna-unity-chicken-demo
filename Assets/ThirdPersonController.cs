@@ -6,11 +6,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class ThirdPersonController : MonoBehaviour 
-{
-
-	// Require a character controller to be attached to the same game object
-	//@script RequireComponent(CharacterController)
+public class ThirdPersonController : MonoBehaviour {
 
 	private bool foxy = false;
 
@@ -77,21 +73,21 @@ public class ThirdPersonController : MonoBehaviour
 	// The current move direction in x-z
 	private Vector3 moveDirection = Vector3.zero;
 	// The current vertical speed
-	private float verticalSpeed= 0.0f;
+	private float verticalSpeed = 0.0f;
 	// The current x-z move speed
-	private float moveSpeed= 0.0f;
+	private float moveSpeed = 0.0f;
 
 	// The last collision flags returned from controller.Move
 	private CollisionFlags collisionFlags; 
 
 	// Are we jumping? (Initiated with jump button and not grounded yet)
-	private bool jumping= false;
-	private bool jumpingReachedApex= false;
+	private bool jumping = false;
+	private bool jumpingReachedApex = false;
 
 	// Are we moving backwards (This locks the camera to not do a 180 degree spin)
-	private bool movingBack= false;
+	private bool movingBack = false;
 	// Is the user pressing any keys?
-	private bool isMoving= false;
+	private bool isMoving = false;
 	// When did the user start walking (Used for going into trot after a while)
 	private float walkTimeStart = 0.0f;
 	// Last time the jump button was clicked down
@@ -99,81 +95,74 @@ public class ThirdPersonController : MonoBehaviour
 	// Last time we performed a jump
 	private float lastJumpTime = -1.0f;
 
-
 	// the height we jumped from (Used to determine for how long to apply extra jump power after jumping.)
 	private float lastJumpStartHeight = 0.0f;
 
-
 	private Vector3 inAirVelocity = Vector3.zero;
-
 	private float lastGroundedTime = 0.0f;
-
-
 	private bool isControllable = true;
-
 	private float target_scale = 1.0f;
 
+	void Awake() {
 
-	void Awake ()
-	{
 		moveDirection = transform.TransformDirection(Vector3.forward);
 
-		UpdateSkin ();
+		UpdateSkin();
 		
-		if(!_animation) {
+		if (!_animation) {
 			Debug.Log("The character you would like to control doesn't have animations. Moving her might look weird.");
 		}
 
-
-		if(!idleAnimation) {
+		if (!idleAnimation) {
 			_animation = null;
 			Debug.Log("No idle animation found. Turning off animations.");
 		}
 
-		if(!walkAnimation) {
+		if (!walkAnimation) {
 			_animation = null;
 			Debug.Log("No walk animation found. Turning off animations.");
 		}
-		if(!runAnimation) {
+
+		if (!runAnimation) {
 			_animation = null;
 			Debug.Log("No run animation found. Turning off animations.");
 		}
 			
-		if(!trotAnimation) {
+		if (!trotAnimation) {
 			_animation = null;
 			Debug.Log("No trot animation found. Turning off animations.");
 		}
 			
-		if(!jumpPoseAnimation && canJump) {
+		if (!jumpPoseAnimation && canJump) {
 			_animation = null;
 			Debug.Log("No jump animation found and the character has canJump enabled. Turning off animations.");
 		}
 
 	}
 
-	public void SwitchSkin(string skin){
+	public void SwitchSkin(string skin) {
 		switch (skin) {
-		case ChickenPlayer.CHICKEN_SKIN:
-			Chickify();
-			Deflate();
+			case ChickenPlayer.CHICKEN_SKIN:
+				Chickify();
+				Deflate();
 			break;
 
-		case ChickenPlayer.FOX_SKIN:
-			Foxify();
-			Deflate();
+			case ChickenPlayer.FOX_SKIN:
+				Foxify();
+				Deflate();
 			break;
 
-		case ChickenPlayer.MEGACHICKEN_SKIN:
-			Chickify();
-			Inflate(inflate_size);
+			case ChickenPlayer.MEGACHICKEN_SKIN:
+				Chickify();
+				Inflate(inflate_size);
 			break;
 		}
 
 		UpdateSkin ();
 	}
 
-	public void Foxify(){
-		if(!foxy){
+	public void Foxify() {
+		if (!foxy) {
 
 			foxy = true;
 
@@ -181,8 +170,8 @@ public class ThirdPersonController : MonoBehaviour
 		}
 	}
 
-	public void Chickify(){
-		if(foxy){
+	public void Chickify() {
+		if (foxy) {
 
 			foxy = false;
 
@@ -190,15 +179,15 @@ public class ThirdPersonController : MonoBehaviour
 		}
 	}
 
-	public void Inflate(float target){
+	public void Inflate(float target) {
 		target_scale = target;
 	}
 	
-	public void Deflate(){
+	public void Deflate() {
 		target_scale = 1.0f;
 	}
 
-	private void UpdateSkin(){
+	private void UpdateSkin() {
 
 		Vector3 scale;
 
@@ -208,10 +197,10 @@ public class ThirdPersonController : MonoBehaviour
 			scale = new Vector3(1.0f, 1.0f, 1.0f);
 		}
 
-		if(foxy){
+		if (foxy) {
 			currentSkin = foxSkin;
 			chickenSkin.SetActive(false);
-		}else{
+		} else {
 			currentSkin = chickenSkin;
 			foxSkin.SetActive(false);
 		}
@@ -223,8 +212,8 @@ public class ThirdPersonController : MonoBehaviour
 	}
 
 
-	void  UpdateSmoothedMovementDirection ()
-	{
+	void UpdateSmoothedMovementDirection() {
+
 		Transform cameraTransform = Camera.main.transform;
 		bool grounded = IsGrounded();
 		
@@ -254,8 +243,7 @@ public class ThirdPersonController : MonoBehaviour
 		Vector3 targetDirection = h * right + v * forward;
 		
 		// Grounded controls
-		if (grounded)
-		{
+		if (grounded) {
 			// Lock camera for short period when transitioning moving & standing still
 			lockCameraTimer += Time.deltaTime;
 			if (isMoving != wasMoving) {
@@ -264,16 +252,11 @@ public class ThirdPersonController : MonoBehaviour
 			// We store speed and direction seperately,
 			// so that when the character stands still we still have a valid forward direction
 			// moveDirection is always normalized, and we only update it if there is user input.
-			if (targetDirection != Vector3.zero)
-			{
+			if (targetDirection != Vector3.zero) {
 				// If we are really slow, just snap to the target direction
-				if (moveSpeed < walkSpeed * 0.9f && grounded)
-				{
+				if (moveSpeed < walkSpeed * 0.9f && grounded) {
 					moveDirection = targetDirection.normalized;
-				}
-				// Otherwise smoothly turn towards it
-				else
-				{
+				} else { // Otherwise smoothly turn towards it
 					moveDirection = Vector3.RotateTowards(moveDirection, targetDirection, rotateSpeed * Mathf.Deg2Rad * Time.deltaTime, 1000);
 					
 					moveDirection = moveDirection.normalized;
@@ -290,18 +273,13 @@ public class ThirdPersonController : MonoBehaviour
 			_characterState = CharacterState.Idle;
 			
 			// Pick speed modifier
-			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift))
-			{
+			if (Input.GetKey (KeyCode.LeftShift) || Input.GetKey (KeyCode.RightShift)) {
 				targetSpeed *= runSpeed;
 				_characterState = CharacterState.Running;
-			}
-			else if (Time.time - trotAfterSeconds > walkTimeStart)
-			{
+			} else if (Time.time - trotAfterSeconds > walkTimeStart) {
 				targetSpeed *= trotSpeed;
 				_characterState = CharacterState.Trotting;
-			}
-			else
-			{
+			} else {
 				targetSpeed *= walkSpeed;
 				_characterState = CharacterState.Walking;
 			}
@@ -312,10 +290,8 @@ public class ThirdPersonController : MonoBehaviour
 			if (moveSpeed < walkSpeed * 0.3f) {
 				walkTimeStart = Time.time;
 			}
-		}
-		// In air controls
-		else
-		{
+
+		} else { // In air controls
 			// Lock camera while in air
 			if (jumping) {
 				lockCameraTimer = 0.0f;
@@ -323,17 +299,14 @@ public class ThirdPersonController : MonoBehaviour
 			if (isMoving) {
 				inAirVelocity += targetDirection.normalized * Time.deltaTime * inAirControlAcceleration;
 			}
-		}
-		
-
-			
+		}	
 	}
 
-
-	void ApplyJumping (){
+	void ApplyJumping() {
 		// Prevent jumping too fast after each other
-		if (lastJumpTime + jumpRepeatTime > Time.time)
+		if (lastJumpTime + jumpRepeatTime > Time.time) {
 			return;
+		}
 
 		if (IsGrounded()) {
 			// Jump
@@ -346,38 +319,32 @@ public class ThirdPersonController : MonoBehaviour
 		}
 	}
 
-
-	void  ApplyGravity ()
-	{
-		if (isControllable)	// don't move player at all if not controllable.
-		{
+	void ApplyGravity() {
+		if (isControllable) { 	// don't move player at all if not controllable.
 			// Apply gravity
 			bool jumpButton= Input.GetButton("Jump");
 			
-			
 			// When we reach the apex of the jump we send out a message
-			if (jumping && !jumpingReachedApex && verticalSpeed <= 0.0f)
-			{
+			if (jumping && !jumpingReachedApex && verticalSpeed <= 0.0f) {
 				jumpingReachedApex = true;
 				SendMessage("DidJumpReachApex", SendMessageOptions.DontRequireReceiver);
 			}
 		
-			if (IsGrounded ())
+			if (IsGrounded()) {
 				verticalSpeed = 0.0f;
-			else
+			} else {
 				verticalSpeed -= gravity * Time.deltaTime;
+			}
 		}
 	}
 
-	public float CalculateJumpVerticalSpeed ( float targetJumpHeight  )
-	{
+	public float CalculateJumpVerticalSpeed(float targetJumpHeight) {
 		// From the jump height and gravity we deduce the upwards speed 
 		// for the character to reach at the apex.
 		return Mathf.Sqrt(2 * targetJumpHeight * gravity);
 	}
 
-	public void DidJump ()
-	{
+	public void DidJump() {
 		jumping = true;
 		jumpingReachedApex = false;
 		lastJumpTime = Time.time;
@@ -387,17 +354,14 @@ public class ThirdPersonController : MonoBehaviour
 		_characterState = CharacterState.Jumping;
 	}
 
-	void Update ()
-	{
+	void Update() {
 		
-		if (!isControllable)
-		{
+		if (!isControllable) {
 			// kill all inputs if not controllable.
 			Input.ResetInputAxes();
 		}
 
-		if (Input.GetButtonDown ("Jump"))
-		{
+		if (Input.GetButtonDown ("Jump")) {
 			lastJumpButtonTime = Time.time;
 		}
 
@@ -406,13 +370,13 @@ public class ThirdPersonController : MonoBehaviour
 		// Apply gravity
 		// - extra power jump modifies gravity
 		// - controlledDescent mode modifies gravity
-		ApplyGravity ();
+		ApplyGravity();
 
 		// Apply jumping logic
-		ApplyJumping ();
+		ApplyJumping();
 		
 		// Calculate actual motion
-		Vector3 movement = moveDirection * moveSpeed + new Vector3 (0, verticalSpeed, 0) + inAirVelocity;
+		Vector3 movement = moveDirection * moveSpeed + new Vector3(0, verticalSpeed, 0) + inAirVelocity;
 		movement *= Time.deltaTime;
 		
 		// Move the controller
@@ -420,9 +384,8 @@ public class ThirdPersonController : MonoBehaviour
 		collisionFlags = controller.Move(movement);
 		
 		// ANIMATION sector
-		if(_animation) {
-			if(_characterState == CharacterState.Jumping) 
-			{
+		if (_animation) {
+			if (_characterState == CharacterState.Jumping) {
 				if(!jumpingReachedApex) {
 					_animation[jumpPoseAnimation.name].speed = jumpAnimationSpeed;
 					_animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
@@ -432,126 +395,102 @@ public class ThirdPersonController : MonoBehaviour
 					_animation[jumpPoseAnimation.name].wrapMode = WrapMode.ClampForever;
 					_animation.CrossFade(jumpPoseAnimation.name);				
 				}
-			} 
-			else 
-			{
-				if(controller.velocity.sqrMagnitude < 0.1f) {
+			} else {
+				if (controller.velocity.sqrMagnitude < 0.1f) {
 					_characterState = CharacterState.Idle;
 					_animation.CrossFade(idleAnimation.name);
-				}
-				else 
-				{
-					if(_characterState == CharacterState.Running) {
+				
+				} else {
+					if (_characterState == CharacterState.Running) {
 						_animation[runAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0f, runMaxAnimationSpeed);
 						_animation.CrossFade(runAnimation.name);	
-					}
-					else if(_characterState == CharacterState.Trotting) {
+					} else if(_characterState == CharacterState.Trotting) {
 						_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0f, trotMaxAnimationSpeed);
 						_animation.CrossFade(trotAnimation.name);	
-					}
-					else if(_characterState == CharacterState.Walking) {
+					} else if(_characterState == CharacterState.Walking) {
 						_animation[walkAnimation.name].speed = Mathf.Clamp(controller.velocity.magnitude, 0.0f, walkMaxAnimationSpeed);
 						_animation.CrossFade(walkAnimation.name);	
 					}
-					
 				}
 			}
 		}
+
 		// ANIMATION sector
 		
 		// Set rotation to the move direction
-		if (IsGrounded())
-		{
-			
+		if (IsGrounded()) {
 			transform.rotation = Quaternion.LookRotation(moveDirection);
-				
-		}	
-		else
-		{
-			Vector3 xzMove= movement;
+		} else {
+			Vector3 xzMove = movement;
 			xzMove.y = 0;
-			if (xzMove.sqrMagnitude > 0.001f)
-			{
+			if (xzMove.sqrMagnitude > 0.001f) {
 				transform.rotation = Quaternion.LookRotation(xzMove);
 			}
 		}	
 		
 		// We are in jump mode but just became grounded
-		if (IsGrounded())
-		{
+		if (IsGrounded()) {
 			lastGroundedTime = Time.time;
 			inAirVelocity = Vector3.zero;
-			if (jumping)
-			{
+			if (jumping) {
 				jumping = false;
 				SendMessage("DidLand", SendMessageOptions.DontRequireReceiver);
 			}
 		}
+
 		// Scale to target
 		float scale = Mathf.Lerp(currentSkin.transform.localScale.x, target_scale, 0.2f);
 		currentSkin.transform.localScale = new Vector3 (scale, scale, scale);
 	}
 
-	void OnControllerColliderHit ( ControllerColliderHit hit   )
-	{
-	//	Debug.DrawRay(hit.point, hit.normal);
-		if (hit.moveDirection.y > 0.01f) 
+	void OnControllerColliderHit(ControllerColliderHit hit) {
+
+		if (hit.moveDirection.y > 0.01f) {
 			return;
+		}
 	}
 
-	public float GetSpeed ()
-	{
+	public float GetSpeed() {
 		return moveSpeed;
 	}
 
-	public bool IsJumping ()
-	{
+	public bool IsJumping() {
 		return jumping;
 	}
 
-	public bool IsGrounded ()
-	{
+	public bool IsGrounded() {
 		return (collisionFlags & CollisionFlags.CollidedBelow) != 0;
 	}
 
-	public Vector3 GetDirection ()
-	{
+	public Vector3 GetDirection() {
 		return moveDirection;
 	}
 
-	public bool IsMovingBackwards ()
-	{
+	public bool IsMovingBackwards() {
 		return movingBack;
 	}
 
-	public float GetLockCameraTimer ()
-	{
+	public float GetLockCameraTimer() {
 		return lockCameraTimer;
 	}
 
-	public bool IsMoving ()
-	{
-		 return Mathf.Abs(Input.GetAxisRaw("Vertical")) + Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.5f;
+	public bool IsMoving() {
+		return Mathf.Abs(Input.GetAxisRaw("Vertical")) + Mathf.Abs(Input.GetAxisRaw("Horizontal")) > 0.5f;
 	}
 
-	public bool HasJumpReachedApex ()
-	{
+	public bool HasJumpReachedApex() {
 		return jumpingReachedApex;
 	}
 
-	public bool IsGroundedWithTimeout ()
-	{
+	public bool IsGroundedWithTimeout() {
 		return lastGroundedTime + groundedTimeout > Time.time;
 	}
 
-	public void Reset ()
-	{
+	public void Reset() {
 		gameObject.tag = "Player";
 	}
 
-	public int GetState ()
-	{
+	public int GetState() {
 		return (int)_characterState;
-
 	}
 }
